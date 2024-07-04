@@ -1,3 +1,4 @@
+import base64
 import streamlit as st
 import numpy as np
 import pandas as pd
@@ -6,6 +7,8 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
 from sklearn.metrics import f1_score
 from baselinepreprocess import getData, getData_updated_prepro
+import io
+
 
 def svm(X_train, X_test, y_train, y_test):
     # Standardize the features
@@ -23,6 +26,7 @@ def svm(X_train, X_test, y_train, y_test):
 
     # Display results on Streamlit
     st.write("Test F1 Score:", test_f1_score)
+
 
 def svm_iteration(X_train, X_test, y_train, y_test):
     # Standardize the features
@@ -70,8 +74,13 @@ def svm_iteration(X_train, X_test, y_train, y_test):
     # Save the predictions for the last iteration
     if last_y_pred is not None:
         output_df = pd.DataFrame({'test_row': range(len(y_test)), 'predicted_match': last_y_pred})
-        output_df.to_csv('match_predictions.csv', index=False)
-        st.write("Predictions saved to match_predictions.csv")
+
+        # Convert DataFrame to CSV
+        csv = output_df.to_csv(index=False)
+        b64 = base64.b64encode(csv.encode()).decode()  # some strings <-> bytes conversions necessary here
+        href = f'<a href="data:file/csv;base64,{b64}" download="match_predictions.csv">Download CSV File</a>'
+        st.markdown(href, unsafe_allow_html=True)
+
 
 def main():
     """Streamlit App"""
@@ -90,6 +99,7 @@ def main():
         svm(X_train, X_test, y_train, y_test)
         st.header("F1 Score vs. Training Set Size")
         svm_iteration(X_train_upd, X_test_upd, y_train_upd, y_test_upd)
+
 
 if __name__ == "__main__":
     main()
