@@ -30,7 +30,7 @@ def getData(df):
     filtered_df = filtered_df.drop(filtered_df.filter(regex='d_').columns, axis=1)
     X = filtered_df.drop(["has_missing_features", "professional_role", "ethnic_background", "study_field"],
                             axis=1)
-    return X_test
+    return X
 
 
 def getData_updated_prepro(df):
