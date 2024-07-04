@@ -9,31 +9,20 @@ from sklearn.metrics import f1_score
 from baselinepreprocess import getData, getData_updated_prepro
 import io
 
+def eval_match(predictions: pd.DataFrame, ground_truth: pd.DataFrame):
+    combined = pd.merge(predictions, ground_truth, on='unique_id')
+    f1_match = f1_score(combined["match_x"], combined["match_y"])
+    return f1_match
 
-def svm(X_train, X_test, y_train, y_test):
-    # Standardize the features
-    scaler = StandardScaler()
-    X_train_scaled = scaler.fit_transform(X_train)
-    X_test_scaled = scaler.transform(X_test)
 
+def svm(X_train, y_train):
     # Train an SVM model
     model = SVC(kernel='linear', random_state=42)
-    model.fit(X_train_scaled, y_train)
-
-    # Evaluate the model
-    y_pred = model.predict(X_test_scaled)
-    test_f1_score = f1_score(y_test, y_pred)
-
-    # Display results on Streamlit
-    st.write("Test F1 Score:", test_f1_score)
+    model.fit(X_train, y_train)
+    return model
 
 
-def svm_iteration(X_train, X_test, y_train, y_test):
-    # Standardize the features
-    scaler = StandardScaler()
-    X_train_scaled = scaler.fit_transform(X_train)
-    X_test_scaled = scaler.transform(X_test)
-
+def svm_iteration(X_test, y_test, model):
     # Define training set sizes to iterate over
     percents_from_training = np.linspace(0.1, 1.0, 10)
     f1_scores = []
@@ -42,18 +31,14 @@ def svm_iteration(X_train, X_test, y_train, y_test):
     for train_size in percents_from_training:
         # Create a smaller training set
         end_idx = int(len(X_train_scaled) * train_size)
-        X_train_part = X_train_scaled[:end_idx]
-        y_train_part = y_train[:end_idx]
+        X_test_part = X_test[:end_idx]
+        y_test_part = y_test[:end_idx]
 
         # Check if the training subset contains more than one class
         if len(np.unique(y_train_part)) > 1:
-            # Train an SVM model
-            model = SVC(kernel='linear', random_state=42)
-            model.fit(X_train_part, y_train_part)
-
             # Evaluate the model
-            y_pred = model.predict(X_test_scaled)
-            f1 = f1_score(y_test, y_pred)
+            y_pred = model.predict(X_test_part)
+            f1 = f1_score(y_test_part, y_pred)
             f1_scores.append(f1)
 
             # Save the last predictions
@@ -64,8 +49,8 @@ def svm_iteration(X_train, X_test, y_train, y_test):
     # Plot the F1 scores
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=percents_from_training * 100, y=f1_scores, mode='lines+markers', name='SVM F1 Score'))
-    fig.update_layout(title='SVM F1 Score vs. Training Set Size',
-                      xaxis_title='Percent of Training Set',
+    fig.update_layout(title='SVM F1 Score vs. Test Set Size',
+                      xaxis_title='Percent of Test Set',
                       yaxis_title='F1 Score')
 
     # Display plot on Streamlit
@@ -73,8 +58,9 @@ def svm_iteration(X_train, X_test, y_train, y_test):
 
     # Save the predictions for the last iteration
     if last_y_pred is not None:
-        output_df = pd.DataFrame({'test_row': range(len(y_test)), 'predicted_match': last_y_pred})
-
+        last_y_pred = pd.merge(X_test["unique_id"], last_y_pred)
+        ground_true = pd.merge(X_test["unique_id"], y_test)
+        output_df = eval_match(last_y_pred, ground_true)
         # Convert DataFrame to CSV
         csv = output_df.to_csv(index=False)
         b64 = base64.b64encode(csv.encode()).decode()  # some strings <-> bytes conversions necessary here
@@ -84,21 +70,21 @@ def svm_iteration(X_train, X_test, y_train, y_test):
 
 def main():
     """Streamlit App"""
-    st.title("BaseLine Model Analysis")
-    file_uploader = st.file_uploader("Choose a preprocessed data file", type="csv")
-
-    if file_uploader is not None:
+    st.title("BaseLine Model Analysis- Hackathon 2024")
+    file_train = st.file_uploader("Choose a train data file", type="csv")
+    file_uploader = st.file_uploader("Choose a test data file", type="csv")
+    if file_train is not None and file_uploader is not None:
         # Read the uploaded file into a pandas DataFrame
-        df = pd.read_csv(file_uploader)
-
+        df_train = pd.read_csv(file_uploader)
         # Ensure the DataFrame is correctly passed to the data preprocessing functions
-        X_train, X_test, y_train, y_test = getData(df)
-        X_train_upd, X_test_upd, y_train_upd, y_test_upd = getData_updated_prepro(df)
-
+        X_train, y_train = getData(df_train)
+        df_test = pd.read_csv(file_uploader)
+        # Ensure the DataFrame is correctly passed to the data preprocessing functions
+        X_test, y_test = getData(df_test)
         st.header("Evaluation on Full Training Set")
-        svm(X_train, X_test, y_train, y_test)
-        st.header("F1 Score vs. Training Set Size")
-        svm_iteration(X_train_upd, X_test_upd, y_train_upd, y_test_upd)
+        svm(X_test, y_test, model)
+        st.header("F1 Score vs. Test Set Size")
+        svm_iteration(X_test_upd, y_test_upd, model)
 
 
 if __name__ == "__main__":
