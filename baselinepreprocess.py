@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 import plotly.express as px
-from PreProcess import preprocessing
+import preprocessing
 
 TEST_PORTION = 0.25
 RANDOM_SEED = 2
