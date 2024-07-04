@@ -16,8 +16,7 @@ TEST_PORTION = 0.25
 RANDOM_SEED = 2
 
 
-def getData(filename):
-    df = pd.read_csv(filename)
+def getData(df):
     filtered_df = df.dropna(subset=["match"])
     filtered_df = filtered_df.fillna(0)
     print(filtered_df.shape)
@@ -33,8 +32,7 @@ def getData(filename):
     return X_train, X_test, y_train, y_test
 
 
-def getData_updated_prepro(filename):
-    df = pd.read_csv(filename)
+def getData_updated_prepro(df):
     df = preprocessing.preprocess_data(df)
     X, y = df.drop(["match"], axis=1), df.match
     X_train, X_test, y_train, y_test = skm.train_test_split(X, y, test_size=TEST_PORTION, random_state=RANDOM_SEED)
