@@ -1,16 +1,13 @@
 import streamlit as st
 import numpy as np
+import pandas as pd
 import plotly.graph_objects as go
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
 from sklearn.metrics import f1_score
 from baselinepreprocess import getData, getData_updated_prepro
 
-
-def svm(filename):
-    # Get preprocessed data
-    X_train, X_test, y_train, y_test = getData(filename)
-
+def svm(X_train, X_test, y_train, y_test):
     # Standardize the features
     scaler = StandardScaler()
     X_train_scaled = scaler.fit_transform(X_train)
@@ -27,15 +24,7 @@ def svm(filename):
     # Display results on Streamlit
     st.write("Test F1 Score:", test_f1_score)
 
-    # Create a DataFrame with the predictions (optional)
-    # output = pd.DataFrame({'unique_id': X_test.index, 'match': y_pred})
-    # output.to_csv('match_predictions.csv', index=False)
-
-
-def svm_iteration(filename):
-    # Get preprocessed data
-    X_train, X_test, y_train, y_test = getData_updated_prepro(filename)
-
+def svm_iteration(X_train, X_test, y_train, y_test):
     # Standardize the features
     scaler = StandardScaler()
     X_train_scaled = scaler.fit_transform(X_train)
@@ -74,19 +63,23 @@ def svm_iteration(filename):
     # Display plot on Streamlit
     st.plotly_chart(fig)
 
-
 def main():
     """Streamlit App"""
     st.title("BaseLine Model Analysis")
     file_uploader = st.file_uploader("Choose a preprocessed data file", type="csv")
 
     if file_uploader is not None:
-        filename = file_uploader.name
-        st.header("Evaluation on Full Training Set")
-        svm(filename)
-        st.header("F1 Score vs. Training Set Size")
-        svm_iteration(filename)
+        # Read the uploaded file into a pandas DataFrame
+        df = pd.read_csv(file_uploader)
 
+        # Ensure the DataFrame is correctly passed to the data preprocessing functions
+        X_train, X_test, y_train, y_test = getData(df)
+        X_train_upd, X_test_upd, y_train_upd, y_test_upd = getData_updated_prepro(df)
+
+        st.header("Evaluation on Full Training Set")
+        svm(X_train, X_test, y_train, y_test)
+        st.header("F1 Score vs. Training Set Size")
+        svm_iteration(X_train_upd, X_test_upd, y_train_upd, y_test_upd)
 
 if __name__ == "__main__":
     main()
