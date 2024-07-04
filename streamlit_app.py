@@ -68,6 +68,17 @@ def svm_iteration(X_test, y_test, model):
         st.markdown(href, unsafe_allow_html=True)
 
 
+def model_predict(X_test, model):
+    last_y_pred = model.predict(X_test)
+    last_y_pred = pd.merge(X_test["unique_id"], last_y_pred)
+    ground_true = pd.merge(X_test["unique_id"], y_test)
+    output_df = eval_match(last_y_pred, ground_true)
+    # Convert DataFrame to CSV
+    csv = output_df.to_csv(index=False)
+    b64 = base64.b64encode(csv.encode()).decode()  # some strings <-> bytes conversions necessary here
+    href = f'<button><a href="data:file/csv;base64,{b64}" download="match_predictions.csv">Download CSV File</a></button>'
+    st.markdown(href, unsafe_allow_html=True)
+
 def main():
     """Streamlit App"""
     st.title("BaseLine Model Analysis- Hackathon 2024")
@@ -80,11 +91,13 @@ def main():
         X_train, y_train = getData(df_train)
         df_test = pd.read_csv(file_uploader)
         # Ensure the DataFrame is correctly passed to the data preprocessing functions
-        X_test, y_test = getData_test(df_test)
-        st.header("Evaluation on Full Training Set")
-        svm(X_test, y_test, model)
-        st.header("F1 Score vs. Test Set Size")
-        svm_iteration(X_test_upd, y_test_upd, model)
+        X_test = getData_test(df_test)
+        st.header("Prediction")
+        model_predict(X_test, model)
+        #st.header("Evaluation on Full Training Set")
+        #svm(X_test, y_test, model)
+        #st.header("F1 Score vs. Test Set Size")
+        #svm_iteration(X_test_upd, y_test_upd, model)
 
 
 if __name__ == "__main__":
