@@ -13,23 +13,24 @@ import plotly.express as px
 import preprocessing
 
 TEST_PORTION = 0.25
-RANDOM_SEED = 2
+RANDOM_SEED = 998
 
 
 def getData(df):
     filtered_df = df.dropna(subset=["match"])
-    filtered_df = filtered_df.fillna(0)
-    print(filtered_df.shape)
     filtered_df = filtered_df.dropna()
-    print(filtered_df.shape)
     filtered_df = filtered_df.drop(filtered_df.filter(regex='d_').columns, axis=1)
     X, y = filtered_df.drop(["match", "has_missing_features", "professional_role", "ethnic_background", "study_field"],
                             axis=1), filtered_df.match
-    X_train, X_test, y_train, y_test = skm.train_test_split(X, y, test_size=TEST_PORTION, random_state=RANDOM_SEED)
-    print("train: ", X_train.shape, y_train.shape, "test: ",X_test.shape, y_test.shape)
-    doingPCA(X, y)
-    doing_tSNE(X, y)
-    return X_train, X_test, y_train, y_test
+    return X, y
+
+
+def getData(df):
+    filtered_df = filtered_df.dropna()
+    filtered_df = filtered_df.drop(filtered_df.filter(regex='d_').columns, axis=1)
+    X = filtered_df.drop(["has_missing_features", "professional_role", "ethnic_background", "study_field"],
+                            axis=1)
+    return X_test
 
 
 def getData_updated_prepro(df):
