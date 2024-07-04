@@ -33,6 +33,7 @@ def svm_iteration(X_train, X_test, y_train, y_test):
     # Define training set sizes to iterate over
     percents_from_training = np.linspace(0.1, 1.0, 10)
     f1_scores = []
+    last_y_pred = None
 
     for train_size in percents_from_training:
         # Create a smaller training set
@@ -50,6 +51,9 @@ def svm_iteration(X_train, X_test, y_train, y_test):
             y_pred = model.predict(X_test_scaled)
             f1 = f1_score(y_test, y_pred)
             f1_scores.append(f1)
+
+            # Save the last predictions
+            last_y_pred = y_pred
         else:
             f1_scores.append(np.nan)  # Append NaN if only one class is present
 
@@ -62,6 +66,12 @@ def svm_iteration(X_train, X_test, y_train, y_test):
 
     # Display plot on Streamlit
     st.plotly_chart(fig)
+
+    # Save the predictions for the last iteration
+    if last_y_pred is not None:
+        output_df = pd.DataFrame({'test_row': range(len(y_test)), 'predicted_match': last_y_pred})
+        output_df.to_csv('match_predictions.csv', index=False)
+        st.write("Predictions saved to match_predictions.csv")
 
 def main():
     """Streamlit App"""
