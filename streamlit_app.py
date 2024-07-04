@@ -64,7 +64,7 @@ def svm_iteration(X_test, y_test, model):
         # Convert DataFrame to CSV
         csv = output_df.to_csv(index=False)
         b64 = base64.b64encode(csv.encode()).decode()  # some strings <-> bytes conversions necessary here
-        href = f'<a href="data:file/csv;base64,{b64}" download="match_predictions.csv">Download CSV File</a>'
+        href = f'<button><a href="data:file/csv;base64,{b64}" download="match_predictions.csv">Download CSV File</a></button>'
         st.markdown(href, unsafe_allow_html=True)
 
 
@@ -80,7 +80,7 @@ def main():
         X_train, y_train = getData(df_train)
         df_test = pd.read_csv(file_uploader)
         # Ensure the DataFrame is correctly passed to the data preprocessing functions
-        X_test, y_test = getData(df_test)
+        X_test, y_test = getData_test(df_test)
         st.header("Evaluation on Full Training Set")
         svm(X_test, y_test, model)
         st.header("F1 Score vs. Test Set Size")
