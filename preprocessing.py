@@ -79,8 +79,3 @@ def remove_outlier(df: pd.DataFrame, columns=None) -> pd.DataFrame:
     return df
 
 
-def main():
-    df = pd.read_csv("C:/Users/User/School/IML/IML_Hackathon/IML_Supplied/example_files/mixer_event_training.csv")
-    print(preprocess_data(df).columns)
-
-
