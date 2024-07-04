@@ -84,7 +84,7 @@ def main():
     st.title("BaseLine Model Analysis- Hackathon 2024")
     file_train = st.file_uploader("Choose a train data file", type="csv")
     file_test = st.file_uploader("Choose a test data file", type="csv")
-    if file_train is not None and file_uploader is not None:
+    if file_train is not None and file_test is not None:
         # Read the uploaded file into a pandas DataFrame
         df_train = pd.read_csv(file_train)
         # Ensure the DataFrame is correctly passed to the data preprocessing functions
