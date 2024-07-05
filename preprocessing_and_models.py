@@ -148,7 +148,7 @@ def svm_model_predict(X_test, model):
     return href
 
 
-def tree(X_train, y_train):
+def tree(X_train, y_train, X_test):
     results = {}
     for index, col in enumerate(TASK2_COLS):
         y_train_col = y_train[index].round()
