@@ -41,12 +41,8 @@ def main():
         X_test = getData_test_Task2(df_test, X_train.columns)
         X_test = X_test[X_train.columns]
         st.header("Prediction")
-        results = tree(X_train, y_train, X_test)
-        for col in results:
-            if "_href" in col:
-                st.markdown(results[col], unsafe_allow_html=True)
-            else:
-                st.write(f"Mean squared error for {col}: {results[col]}")
+        href = tree(X_train, y_train, X_test)
+        st.markdown(href, unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
