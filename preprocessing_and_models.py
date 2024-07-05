@@ -85,14 +85,6 @@ def preprocess_train(X_train: pd.DataFrame, y_train: pd.Series):
     y = y.loc[X.index]
     return X, y
 
-
-def preprocess_test(X_test, y_test):
-    X, y = X_test, y_test
-    X = X.dropna().drop_duplicates()
-    y = y.loc(X.index)
-    return X, y
-
-
 def getData_Task2(df: pd.DataFrame):
     df = drop_cols(df)
     df = change_string_columns(df)
@@ -111,6 +103,17 @@ def getData_Task2(df: pd.DataFrame):
         TASK2_COLS[1]]
 
     return X_train, (y_train_creativity_important, y_train_ambition_important)
+
+def getData_test_Task2(df: pd.DataFrame):
+    df = drop_cols(df)
+    df = change_string_columns(df)
+    df = split_ethnicity(df)
+    df = get_dummies(df)
+    df = df.astype(float)
+    df = drop_match(df)
+    df = df.fillna(0)
+    df.dropna().drop_duplicates()
+    return df
 
 def getData(df):
     filtered_df = df.dropna(subset=["match"])
