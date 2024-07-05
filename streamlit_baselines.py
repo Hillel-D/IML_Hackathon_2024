@@ -35,12 +35,12 @@ def main():
         # Read the uploaded file into a pandas DataFrame
         df_train = pd.read_csv(file_train_task2)
         # Ensure the DataFrame is correctly passed to the data preprocessing functions
-        X_train, X_test, y_train, y_test = preprocess_data(df_train)
+        X_train, y_train = getData_Task2(df_train)
         df_test = pd.read_csv(file_test_task2)
         # Ensure the DataFrame is correctly passed to the data preprocessing functions
-        X_test, _, _, _ = preprocess_data(df_test)
+        X_test = getData_test(df_test)
         st.header("Prediction")
-        results = tree(X_train, X_test, y_train, y_test)
+        results = tree(X_test)
         for col in results:
             if "_href" in col:
                 st.markdown(results[col], unsafe_allow_html=True)
