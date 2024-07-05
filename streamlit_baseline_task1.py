@@ -82,7 +82,8 @@ def model_predict(X_test, model):
 
 def main():
     """Streamlit App"""
-    st.title("BaseLine Model Analysis- Hackathon 2024")
+    st.title("BaseLine Models Analysis- Hackathon 2024")
+    st.title("Task 1 BaseLine- Hackathon 2024")
     file_train = st.file_uploader("Choose a train data file", type="csv")
     file_test = st.file_uploader("Choose a test data file", type="csv")
     if file_train is not None and file_test is not None:
