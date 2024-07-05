@@ -40,7 +40,7 @@ def main():
         # Ensure the DataFrame is correctly passed to the data preprocessing functions
         X_test = getData_test(df_test)
         st.header("Prediction")
-        results = tree(X_test)
+        results = tree(X_train, y_train, X_test)
         for col in results:
             if "_href" in col:
                 st.markdown(results[col], unsafe_allow_html=True)
