@@ -110,7 +110,6 @@ def getData_test_Task2(df: pd.DataFrame):
     df = split_ethnicity(df)
     df = get_dummies(df)
     df = df.astype(float)
-    df = drop_match(df)
     df = df.fillna(0)
     df.dropna().drop_duplicates()
     return df
