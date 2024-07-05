@@ -25,7 +25,7 @@ def getData(df):
     return X, y
 
 
-def getData(df):
+def getData_test(df):
     filtered_df = df.dropna()
     filtered_df = filtered_df.drop(filtered_df.filter(regex='d_').columns, axis=1)
     X = filtered_df.drop(["has_missing_features", "professional_role", "ethnic_background", "study_field"],
