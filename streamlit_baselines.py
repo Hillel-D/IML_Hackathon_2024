@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
 from preprocessing_and_models import (
-    getData, getData_test, getData_Task2,
+    getData, getData_test, getData_Task2, getData_test_Task2,
     svm, svm_model_predict, tree
 )
 
