@@ -93,7 +93,7 @@ def preprocess_test(X_test, y_test):
     return X, y
 
 
-def preprocess_data(df: pd.DataFrame):
+def getData_Task2(df: pd.DataFrame):
     df = drop_cols(df)
     df = change_string_columns(df)
     df = split_ethnicity(df)
@@ -105,16 +105,12 @@ def preprocess_data(df: pd.DataFrame):
     X, y = (df.drop(columns=TASK2_COLS),
             df[TASK2_COLS])
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=TEST_PORTION, random_state=RANDOM_SEED)
     X_train, y_train = preprocess_train(X_train, y_train)
-    X_test, y_test = preprocess_test(X_test, y_test)
+    
     y_train_creativity_important, y_train_ambition_important = y_train[TASK2_COLS[0]], y_train[
         TASK2_COLS[1]]
-    y_test_creativity_important, y_test_ambition_important = y_test[TASK2_COLS[0]], y_test[
-        TASK2_COLS[1]]
 
-    return X_train, X_test, (y_train_creativity_important, y_train_ambition_important), (y_test_creativity_important, y_test_ambition_important)
-
+    return X_train, (y_train_creativity_important, y_train_ambition_important)
 
 def getData(df):
     filtered_df = df.dropna(subset=["match"])
@@ -140,34 +136,7 @@ def svm(X_train, y_train):
     return model
 
 
-def svm_iteration(X_test, y_test, model):
-    # Define training set sizes to iterate over
-    percents_from_training = np.linspace(0.1, 1.0, 10)
-    f1_scores = []
-    last_y_pred = None
-
-    for train_size in percents_from_training:
-        # Create a smaller training set
-        end_idx = int(len(X_test) * train_size)
-        X_test_part = X_test[:end_idx]
-        y_test_part = y_test[:end_idx]
-
-        # Check if the training subset contains more than one class
-        if len(np.unique(y_test)) > 1:
-            # Evaluate the model
-            y_pred = model.predict(X_test_part)
-            f1 = f1_score(y_test_part, y_pred)
-            f1_scores.append(f1)
-
-            # Save the last predictions
-            last_y_pred = y_pred
-        else:
-            f1_scores.append(np.nan)  # Append NaN if only one class is present
-
-    return percents_from_training, f1_scores, last_y_pred
-
-
-def model_predict(X_test, model):
+def svm_model_predict(X_test, model):
     last_y_pred = model.predict(X_test)
     output_df = pd.DataFrame({"unique_id": X_test["unique_id"], "match": last_y_pred})
 
@@ -179,11 +148,7 @@ def model_predict(X_test, model):
     return href
 
 
-def tree(X_train, X_test, y_train, y_test):
-    scaler = StandardScaler()
-    X_train_scaled = scaler.fit_transform(X_train)
-    X_test_scaled = scaler.transform(X_test)
-
+def tree(X_train, y_train):
     results = {}
     for index, col in enumerate(TASK2_COLS):
         y_train_col = y_train[index].round()
@@ -192,7 +157,7 @@ def tree(X_train, X_test, y_train, y_test):
         model = DecisionTreeClassifier(random_state=998, max_depth=25)
         model.fit(X_train_scaled, y_train_col)
 
-        y_pred = model.predict(X_test_scaled)
+        y_pred = model.predict(X_test)
         test_accuracy = mean_squared_error(y_test_col, y_pred)
         results[col] = test_accuracy
 
