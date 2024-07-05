@@ -9,12 +9,6 @@ from sklearn.metrics import f1_score
 from baselinepreprocess import getData, getData_updated_prepro
 import io
 
-def eval_match(predictions: pd.DataFrame, ground_truth: pd.DataFrame):
-    combined = pd.merge(predictions, ground_truth, on='unique_id')
-    f1_match = f1_score(combined["match_x"], combined["match_y"])
-    return f1_match
-
-
 def svm(X_train, y_train):
     # Train an SVM model
     model = SVC(kernel='linear', random_state=42)
@@ -30,12 +24,12 @@ def svm_iteration(X_test, y_test, model):
 
     for train_size in percents_from_training:
         # Create a smaller training set
-        end_idx = int(len(X_train_scaled) * train_size)
+        end_idx = int(len(X_test) * train_size)
         X_test_part = X_test[:end_idx]
         y_test_part = y_test[:end_idx]
 
         # Check if the training subset contains more than one class
-        if len(np.unique(y_train_part)) > 1:
+        if len(np.unique(y_test)) > 1:
             # Evaluate the model
             y_pred = model.predict(X_test_part)
             f1 = f1_score(y_test_part, y_pred)
@@ -60,7 +54,7 @@ def svm_iteration(X_test, y_test, model):
     if last_y_pred is not None:
         last_y_pred = pd.merge(X_test["unique_id"], last_y_pred)
         ground_true = pd.merge(X_test["unique_id"], y_test)
-        output_df = eval_match(last_y_pred, ground_true)
+        output_df = pd.merge(last_y_pred, on='unique_id')
         # Convert DataFrame to CSV
         csv = output_df.to_csv(index=False)
         b64 = base64.b64encode(csv.encode()).decode()  # some strings <-> bytes conversions necessary here
@@ -71,8 +65,7 @@ def svm_iteration(X_test, y_test, model):
 def model_predict(X_test, model):
     last_y_pred = model.predict(X_test)
     last_y_pred = pd.merge(X_test["unique_id"], last_y_pred)
-    ground_true = pd.merge(X_test["unique_id"], y_test)
-    output_df = eval_match(last_y_pred, ground_true)
+    output_df = last_y_pred
     # Convert DataFrame to CSV
     csv = output_df.to_csv(index=False)
     b64 = base64.b64encode(csv.encode()).decode()  # some strings <-> bytes conversions necessary here
@@ -89,6 +82,7 @@ def main():
         df_train = pd.read_csv(file_train)
         # Ensure the DataFrame is correctly passed to the data preprocessing functions
         X_train, y_train = getData(df_train)
+        model = svm(X_train, y_train)
         df_test = pd.read_csv(file_test)
         # Ensure the DataFrame is correctly passed to the data preprocessing functions
         X_test = getData_test(df_test)
