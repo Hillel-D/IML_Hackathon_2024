@@ -16,7 +16,7 @@ SUFFIX = "'"
 SPLITTER = "/"
 TEST_PORTION = 0.25
 RANDOM_SEED = 998
-TASK2_COLS = ['creativity_important', 'ambition_important']
+TASK2_COLS = ['ambition_important', 'creativity_important']
 
 
 # ---- handle data ----
