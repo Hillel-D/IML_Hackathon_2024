@@ -6,9 +6,6 @@ import sklearn.model_selection as skm
 import pandas as pd
 import plotly.express as px
 
-TEST_PORTION = 0.25
-RANDOM_SEED = 998
-
 
 def getData(df):
     filtered_df = df.dropna(subset=["match"])
