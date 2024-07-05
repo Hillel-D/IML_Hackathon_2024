@@ -105,7 +105,7 @@ def getData_Task2(df: pd.DataFrame):
     X, y = (df.drop(columns=TASK2_COLS),
             df[TASK2_COLS])
 
-    X_train, y_train = preprocess_train(X_train, y_train)
+    X_train, y_train = preprocess_train(X, y)
     
     y_train_creativity_important, y_train_ambition_important = y_train[TASK2_COLS[0]], y_train[
         TASK2_COLS[1]]
