@@ -10,7 +10,7 @@ from io import StringIO
 
 # ---- Constants ----
 STRING_COLS = ['professional_role', 'ethnic_background', 'ethnic_background_o', 'study_field', 'shared_ethnicity']
-COLS_TO_DROP = ['unique_id', 'has_missing_features', 'wave']
+COLS_TO_DROP = ['has_missing_features', 'wave']
 PREFIX = "b'"
 SUFFIX = "'"
 SPLITTER = "/"
@@ -138,13 +138,13 @@ def getData_test(df):
 
 def svm(X_train, y_train):
     # Train an SVM model
-    model = SVC(kernel='linear', random_state=42)
-    model.fit(X_train, y_train)
+    model = SVC(kernel='linear', random_state=998)
+    model.fit(X_train.drop(["unique_id"], axis=1), y_train)
     return model
 
 
 def svm_model_predict(X_test, model):
-    last_y_pred = model.predict(X_test)
+    last_y_pred = model.predict(X_test.drop(["unique_id"], axis=1))
     output_df = pd.DataFrame({"unique_id": X_test["unique_id"], "match": last_y_pred})
 
     with StringIO() as csv_buffer:
@@ -161,9 +161,9 @@ def tree(X_train, y_train, X_test):
         y_train_col = y_train[index].round()
 
         model = DecisionTreeClassifier(random_state=998, max_depth=25)
-        model.fit(X_train, y_train_col)
+        model.fit(X_train.drop(["unique_id"], axis=1), y_train_col)
 
-        y_pred = model.predict(X_test)
+        y_pred = model.predict(X_test.drop(["unique_id"], axis=1))
         
         output_df = pd.DataFrame({"unique_id": X_test["unique_id"], col: y_pred})
         with StringIO() as csv_buffer:
