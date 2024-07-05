@@ -64,14 +64,21 @@ def svm_iteration(X_test, y_test, model):
 
 def model_predict(X_test, model):
     last_y_pred = model.predict(X_test)
-    print(last_y_pred)    
-    last_y_pred = pd.DataFrame(X_test["unique_id"], last_y_pred)
-    output_df = last_y_pred
-    # Convert DataFrame to CSV
-    csv = output_df.to_csv(index=False)
-    b64 = base64.b64encode(csv.encode()).decode()  # some strings <-> bytes conversions necessary here
-    href = f'<button><a href="data:file/csv;base64,{b64}" download="match_predictions.csv">Download Prediction CSV File</a></button>'
-    st.markdown(href, unsafe_allow_html=True)
+    print(last_y_pred)
+    
+    # Combine unique_id and predictions into a DataFrame
+    output_df = pd.DataFrame({"unique_id": X_test["unique_id"], "match": last_y_pred})
+    
+    # Convert DataFrame to a byte stream (using to_csv with a StringIO buffer)
+    with io.StringIO() as csv_buffer:
+        output_df.to_csv(csv_buffer, index=False)
+        csv = csv_buffer.getvalue().encode()  # Get the encoded bytes
+        
+        # Encode bytes to base64 and create the download link
+        b64 = base64.b64encode(csv).decode()
+        href = f'<button><a href="data:file/csv;base64,{b64}" download="match_predictions.csv">Download Prediction CSV File</a></button>'
+        st.markdown(href, unsafe_allow_html=True)
+
 
 def main():
     """Streamlit App"""
