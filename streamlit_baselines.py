@@ -24,7 +24,7 @@ def main():
         # Ensure the DataFrame is correctly passed to the data preprocessing functions
         X_test = getData_test(df_test)
         st.header("Prediction")
-        href = model_predict(X_test, model)
+        href = svm_model_predict(X_test, model)
         st.markdown(href, unsafe_allow_html=True)
 
     # Task 2: Decision Tree
