@@ -64,7 +64,7 @@ def svm_iteration(X_test, y_test, model):
 
 def model_predict(X_test, model):
     last_y_pred = model.predict(X_test)
-    last_y_pred = pd.merge(X_test["unique_id"], last_y_pred)
+    last_y_pred = pd.merge(X_test["unique_id"], pd.DataFrame(last_y_pred))
     output_df = last_y_pred
     # Convert DataFrame to CSV
     csv = output_df.to_csv(index=False)
