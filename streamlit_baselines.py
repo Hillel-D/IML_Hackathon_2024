@@ -38,7 +38,7 @@ def main():
         X_train, y_train = getData_Task2(df_train)
         df_test = pd.read_csv(file_test_task2)
         # Ensure the DataFrame is correctly passed to the data preprocessing functions
-        X_test = getData_test(df_test)
+        X_test = getData_test_Task2(df_test)
         st.header("Prediction")
         results = tree(X_train, y_train, X_test)
         for col in results:
