@@ -104,7 +104,7 @@ def getData_Task2(df: pd.DataFrame):
 
     return X_train, (y_train_creativity_important, y_train_ambition_important)
 
-def getData_test_Task2(df: pd.DataFrame):
+def getData_test_Task2(df: pd.DataFrame, additional_cols=None):
     df = drop_cols(df)
     df = change_string_columns(df)
     df = split_ethnicity(df)
@@ -112,6 +112,11 @@ def getData_test_Task2(df: pd.DataFrame):
     df = df.astype(float)
     df = df.fillna(0)
     df.dropna().drop_duplicates()
+    if additional_cols is not None:
+        missing_cols = [col for col in additional_cols if col not in df.columns]
+        if missing_cols:
+            df = df.reindex(columns=df.columns.tolist() + missing_cols)
+            df[missing_cols] = 0
     return df
 
 def getData(df):
