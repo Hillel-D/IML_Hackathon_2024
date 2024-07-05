@@ -154,7 +154,7 @@ def tree(X_train, y_train, X_test):
         y_train_col = y_train[index].round()
 
         model = DecisionTreeClassifier(random_state=998, max_depth=25)
-        model.fit(X_train_scaled, y_train_col)
+        model.fit(X_train, y_train_col)
 
         y_pred = model.predict(X_test)
         
