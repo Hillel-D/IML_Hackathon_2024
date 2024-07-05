@@ -157,6 +157,7 @@ def svm_model_predict(X_test, model):
 
 def tree(X_train, y_train, X_test):
     results = {}
+    predictions = {"unique_id": X_test["unique_id"]}
     for index, col in enumerate(TASK2_COLS):
         y_train_col = y_train[index].round()
 
@@ -164,13 +165,14 @@ def tree(X_train, y_train, X_test):
         model.fit(X_train.drop(["unique_id"], axis=1), y_train_col)
 
         y_pred = model.predict(X_test.drop(["unique_id"], axis=1))
+        predictions[col] = y_pred
         
-        output_df = pd.DataFrame({"unique_id": X_test["unique_id"], col: y_pred})
-        with StringIO() as csv_buffer:
-            output_df.to_csv(csv_buffer, index=False)
-            csv = csv_buffer.getvalue().encode()  # Get the encoded bytes
-            b64 = base64.b64encode(csv).decode()
-            href = f'<button><a href="data:file/csv;base64,{b64}" download="{col}_predictions.csv">Download Predictions CSV File</a></button>'
-        results[f"{col}_href"] = href
+    output_df = predictions
+    with StringIO() as csv_buffer:
+        output_df.to_csv(csv_buffer, index=False)
+        csv = csv_buffer.getvalue().encode()  # Get the encoded bytes
+        b64 = base64.b64encode(csv).decode()
+        href = f'<button><a href="data:file/csv;base64,{b64}" download="{col}_predictions.csv">Download Predictions CSV File</a></button>'
+            results[f"{col}_href"] = href
 
     return results
