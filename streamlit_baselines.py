@@ -6,7 +6,7 @@ import plotly.graph_objects as go
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
 from sklearn.metrics import f1_score
-from baselinepreprocess import getData, getData_updated_prepro, getData_test
+from baselinepreprocess import getData, getData_test
 import io
 
 def svm(X_train, y_train):
