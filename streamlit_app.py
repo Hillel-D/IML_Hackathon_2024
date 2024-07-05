@@ -64,12 +64,13 @@ def svm_iteration(X_test, y_test, model):
 
 def model_predict(X_test, model):
     last_y_pred = model.predict(X_test)
+    print(last_y_pred)    
     last_y_pred = pd.DataFrame(X_test["unique_id"], last_y_pred)
     output_df = last_y_pred
     # Convert DataFrame to CSV
     csv = output_df.to_csv(index=False)
     b64 = base64.b64encode(csv.encode()).decode()  # some strings <-> bytes conversions necessary here
-    href = f'<button><a href="data:file/csv;base64,{b64}" download="match_predictions.csv">Download CSV File</a></button>'
+    href = f'<button><a href="data:file/csv;base64,{b64}" download="match_predictions.csv">Download Prediction CSV File</a></button>'
     st.markdown(href, unsafe_allow_html=True)
 
 def main():
