@@ -167,7 +167,7 @@ def tree(X_train, y_train, X_test):
         y_pred = model.predict(X_test.drop(["unique_id"], axis=1))
         predictions[col] = y_pred
         
-    output_df = predictions
+    output_df = pd.DataFrame(predictions)
     with StringIO() as csv_buffer:
         output_df.to_csv(csv_buffer, index=False)
         csv = csv_buffer.getvalue().encode()  # Get the encoded bytes
