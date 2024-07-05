@@ -152,15 +152,12 @@ def tree(X_train, y_train, X_test):
     results = {}
     for index, col in enumerate(TASK2_COLS):
         y_train_col = y_train[index].round()
-        y_test_col = y_test[index]
 
         model = DecisionTreeClassifier(random_state=998, max_depth=25)
         model.fit(X_train_scaled, y_train_col)
 
         y_pred = model.predict(X_test)
-        test_accuracy = mean_squared_error(y_test_col, y_pred)
-        results[col] = test_accuracy
-
+        
         output_df = pd.DataFrame({"unique_id": X_test["unique_id"], col: y_pred})
         with StringIO() as csv_buffer:
             output_df.to_csv(csv_buffer, index=False)
