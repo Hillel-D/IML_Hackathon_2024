@@ -151,7 +151,7 @@ def svm_model_predict(X_test, model):
         output_df.to_csv(csv_buffer, index=False)
         csv = csv_buffer.getvalue().encode()  # Get the encoded bytes
         b64 = base64.b64encode(csv).decode()
-        href = f'<button><a href="data:file/csv;base64,{b64}" download="match_predictions.csv">Download Prediction CSV File</a></button>'
+        href = f'<button><a href="data:file/csv;base64,{b64}" download="match_predictions.csv">Download Task1 Prediction CSV File</a></button>'
     return href
 
 
@@ -172,7 +172,5 @@ def tree(X_train, y_train, X_test):
         output_df.to_csv(csv_buffer, index=False)
         csv = csv_buffer.getvalue().encode()  # Get the encoded bytes
         b64 = base64.b64encode(csv).decode()
-        href = f'<button><a href="data:file/csv;base64,{b64}" download="{col}_predictions.csv">Download Predictions CSV File</a></button>'
-            results[f"{col}_href"] = href
-
-    return results
+        href = f'<button><a href="data:file/csv;base64,{b64}" download="Task2_predictions.csv">Download Task2 Predictions CSV File</a></button>'
+    return href
